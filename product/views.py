@@ -5,15 +5,19 @@ from rest_framework.response import Response
 from .models import Product
 from .serializers import ProductSerializer
 from .filters import ProductsFilter
+from rest_framework.pagination import PageNumberPagination
 
 @api_view(['GET'])
 def get_all_products(request):
-    #products = Product.objects.all()
+
     filterset = ProductsFilter(request.GET,queryset = Product.objects.all().order_by('id'))
-    #serilizer = ProductSerializer(products, many = True)
-    serilizer = ProductSerializer(filterset.qs, many = True)
-    #print(products)
-    return Response({"products":serilizer.data})
+    count = filterset.qs.count()
+    paginator = PageNumberPagination()
+    paginator.page_size = 2
+
+    queryset = paginator.paginate_queryset(filterset.qs, request)
+    serializer = ProductSerializer(queryset, many = True)
+    return Response({"products":serializer.data,"per page":2,"count":count})
 
 @api_view(['GET'])
 def get_by_id_product(request,pk):
@@ -23,3 +27,10 @@ def get_by_id_product(request,pk):
     return Response({'product':serializer.data})
 
 
+
+
+
+
+    #products = Product.objects.all()
+    #serilizer = ProductSerializer(products, many = True)
+    #print(products)
