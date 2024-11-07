@@ -19,7 +19,8 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include('product.urls'))
+    path('api/',include('product.urls')),
+    path('api/',include('account.urls')),
 ]
 
 handler404 = 'utils.error_view.handler404'
